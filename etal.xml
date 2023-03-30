@@ -1,0 +1,11 @@
+<? xml version="1.0.0" ?>
+<ETAL>
+    <FILE>steak-night.moc</FILE>
+    <OUTPUTFILE>output.txt</OUTPUTFILE>
+    <NAME>Steak Night</NAME>
+
+    <CREATED>30/03/2023</CREATED>
+    <LASTMODIFIED>30/03/2023</LASTMODIFIED>
+    <MINVERID>5600</MINVERID>
+    <AUTHOR>Business Reply Ltd</AUTHOR>
+</ETAL>

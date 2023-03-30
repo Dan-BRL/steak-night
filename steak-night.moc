@@ -1,0 +1,134 @@
+/*************************************************************
+LOAD FILES
+*************************************************************/
+//dofile("etal\\lib\\strings.moc");
+
+
+/*****************************************************************
+DEFINE GLOBAL VARIABLES
+******************************************************************/
+local g_bTestMode = true;
+
+
+/************************************************************
+WHEN TOUCH POINT STARTS
+ - enable features if in test mode
+************************************************************/
+function OnInit()
+{
+	ICR_SetLocalUserData("TESTMODE", g_bTestMode, true);
+	
+	if(g_bTestMode)
+	{
+		ICR_SetFeature("CONSOLE",g_bTestMode);
+		ICR_SetFeature("AUTORESTART",g_bTestMode);
+		ICR_SetFeature("DEBUGLOG",g_bTestMode);
+	}
+
+	CreateLocalUserData();	
+}
+
+/************************************************************
+CREATES LOCAL USER DATA
+********************************************************** */
+function CreateLocalUserData()
+{
+	ICR_SetLocalUserData("bScriptEnabled", false, true);
+    ICR_SetLocalUserData("nSteakPLU1", 0, true);
+    ICR_SetLocalUserData("nSteakPLU2", 0, true);
+    ICR_SetLocalUserData("nSteakPLU3", 0, true);
+    ICR_SetLocalUserData("nSteakPLU4", 0, true);
+    ICR_SetLocalUserData("nSteakPLU5", 0, true);
+    ICR_SetLocalUserData("nSteakPLU6", 0, true);
+    ICR_SetLocalUserData("nSteakPLU7", 0, true);
+    ICR_SetLocalUserData("nSteakPLU8", 0, true);
+    ICR_SetLocalUserData("nSteakPLU9", 0, true);
+    ICR_SetLocalUserData("nSteakPLU10", 0, true);
+    ICR_SetLocalUserData("nWine175mlSTSKey", 0, true);
+    ICR_SetLocalUserData("nWine250mlSTSKey", 0, true);
+}
+
+
+/************************************************************
+AFTER A BUTTON IS PRESSED
+************************************************************/
+function AfterKeyPress(nFile, nRecord, nKeytype) 
+{
+    // we only care if it's a PLU key
+    if(nFile == 1)
+    {
+        // create an array of steak PLUs from our pgm3 settings
+        local aSteakPLUs = [];
+        aSteakPLUs.push(ICR_GetLocalUserData("nSteakPLU1"));
+        aSteakPLUs.push(ICR_GetLocalUserData("nSteakPLU2"));
+        aSteakPLUs.push(ICR_GetLocalUserData("nSteakPLU3"));
+        aSteakPLUs.push(ICR_GetLocalUserData("nSteakPLU4"));
+        aSteakPLUs.push(ICR_GetLocalUserData("nSteakPLU5"));
+        aSteakPLUs.push(ICR_GetLocalUserData("nSteakPLU6"));
+        aSteakPLUs.push(ICR_GetLocalUserData("nSteakPLU7"));
+        aSteakPLUs.push(ICR_GetLocalUserData("nSteakPLU8"));
+        aSteakPLUs.push(ICR_GetLocalUserData("nSteakPLU9"));
+        aSteakPLUs.push(ICR_GetLocalUserData("nSteakPLU10"));
+
+        // check if the PLU is in our steak PLU array
+        if(aSteakPLUs.find(nRecord) != null)
+        {
+            // steak PLU was pressed, so show the wine measure dialog
+            ICR_ListDialog_AddItem("175ml WINE", true);
+            ICR_ListDialog_AddItem("250ml WINE");
+            local nResult = ICR_ListDialog("CHOOSE WINE MEASURE");
+
+            // check the result of the dialog
+            switch(nResult) 
+            {
+                case 1:
+                    // press the 175ml wine key
+                    ICR_KeyPress(53, ICR_GetLocalUserData("nWine175mlSTSKey"));
+                    break;
+
+                case 2:
+                    // press the 250ml wine key
+                    ICR_KeyPress(53, ICR_GetLocalUserData("nWine250mlSTSKey"));
+                    break;
+
+                default:
+                    break;
+            }
+        }
+    }
+
+    return true;
+}
+
+
+function OnEnterPGMMenu(nSub)
+{
+	ICR_PurgeProgramSettings();
+	switch(nSub)
+	{
+		case 0:
+			// script settings
+			ICR_AdvertiseProgramHeading("Script Settings");
+			ICR_AdvertiseProgramSetting("Script Enabled?", "bScriptEnabled");
+			// wine status key settings
+            ICR_AdvertiseProgramHeading("Wine Status Key Settings");
+            ICR_AdvertiseProgramSetting("175ml Status Key", "nWine175mlSTSKey");
+            ICR_AdvertiseProgramSetting("250ml Status Key", "nWine250mlSTSKey");
+            // steak PLU settings
+            ICR_AdvertiseProgramHeading("Steak PLU Settings");
+            ICR_AdvertiseProgramSetting("Steak PLU 1", "nSteakPLU1");
+            ICR_AdvertiseProgramSetting("Steak PLU 2", "nSteakPLU2");
+            ICR_AdvertiseProgramSetting("Steak PLU 3", "nSteakPLU3");
+            ICR_AdvertiseProgramSetting("Steak PLU 4", "nSteakPLU4");
+            ICR_AdvertiseProgramSetting("Steak PLU 5", "nSteakPLU5");
+            ICR_AdvertiseProgramSetting("Steak PLU 6", "nSteakPLU6");
+            ICR_AdvertiseProgramSetting("Steak PLU 7", "nSteakPLU7");
+            ICR_AdvertiseProgramSetting("Steak PLU 8", "nSteakPLU8");
+            ICR_AdvertiseProgramSetting("Steak PLU 9", "nSteakPLU9");
+            ICR_AdvertiseProgramSetting("Steak PLU 10", "nSteakPLU10");
+			break;
+
+		default:
+			break;
+	}
+}
